@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloodLink — Find a Donor</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Page-specific additions */
+    body { padding-top: 0; }
+
+    .page-wrap {
+      min-height: calc(100vh - 80px);
+    }
+
+    .results-section {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.5rem 6% 5rem;
+    }
+
+    .results-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .results-count {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .results-count strong { color: var(--red); }
+
+    .sort-select {
+      padding: 0.45rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      background: white;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .sort-select:focus { border-color: var(--red); }
+
+    .donors-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 5rem 2rem;
+      color: var(--text-muted);
+      background: white;
+      border-radius: 16px;
+      border: 1px dashed var(--border);
+    }
+
+    .no-results .nr-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .no-results h3 {
+      font-family: 'Playfair Display', serif;
+      color: var(--dark);
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .no-results p {
+      font-size: 0.9rem;
+      max-width: 320px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(192,21,42,0.08);
+      color: var(--red);
+      border: 1px solid var(--border);
+      padding: 0.45rem 1rem;
+      border-radius: 50px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .contact-btn:hover {
+      background: var(--red);
+      color: white;
+      border-color: var(--red);
+    }
+
+    .donor-card {
+      position: relative;
+    }
+
+    .donor-card-delay-1 { animation-delay: 0.05s; }
+    .donor-card-delay-2 { animation-delay: 0.1s; }
+    .donor-card-delay-3 { animation-delay: 0.15s; }
+    .donor-card-delay-4 { animation-delay: 0.2s; }
+    .donor-card-delay-5 { animation-delay: 0.25s; }
+
+    .loading-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Active filter tags */
+    .filter-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+
+    .filter-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(192,21,42,0.08);
+      border: 1px solid var(--border);
+      color: var(--red);
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .filter-tag button {
+      background: none;
+      border: none;
+      color: var(--red);
+      cursor: pointer;
+      padding: 0;
+      font-size: 0.85rem;
+      line-height: 1;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.4rem;
+      margin-top: 2.5rem;
+    }
+
+    .page-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: white;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .page-btn:hover, .page-btn.active {
+      background: var(--red);
+      color: white;
+      border-color: var(--red);
+    }
+
+    /* Mobile search box adjustments */
+    @media (max-width: 700px) {
+      .search-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ─────────────────────────────────────── -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">♥</div>
+      <span class="nav-logo-text">Blood<span>Link</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="search.html" class="active">Find Donor</a></li>
+      <li><a href="auth.html">Register</a></li>
+      <li><a href="auth.html" class="nav-cta">Login</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- ─── SEARCH HERO ──────────────────────────── -->
+    <div class="search-hero">
+      <h1>Find a Blood Donor</h1>
+      <p>Search our network by blood group and city — instantly</p>
+
+      <div class="search-box">
+        <div class="search-row">
+          <div class="field-group">
+            <label>Blood Group</label>
+            <select id="filter-blood">
+              <option value="">All Blood Types</option>
+              <option>A+</option>
+              <option>A-</option>
+              <option>B+</option>
+              <option>B-</option>
+              <option>AB+</option>
+              <option>AB-</option>
+              <option>O+</option>
+              <option>O-</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label>City / Location</label>
+            <input type="text" id="filter-city" placeholder="e.g. Bhubaneswar">
+          </div>
+
+          <button class="btn btn-primary" onclick="runSearch()" style="white-space:nowrap; padding: 0.75rem 1.5rem;">
+            🔍 Search
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RESULTS ──────────────────────────────── -->
+    <div class="results-section">
+
+      <div id="filter-tags" class="filter-tags"></div>
+
+      <div class="results-toolbar">
+        <div class="results-count" id="results-count">
+          Showing <strong id="count-num">—</strong> donors
+        </div>
+        <select class="sort-select" id="sort-select" onchange="sortAndRender()">
+          <option value="name">Sort: Name (A–Z)</option>
+          <option value="blood">Sort: Blood Group</option>
+          <option value="city">Sort: City</option>
+        </select>
+      </div>
+
+      <div id="results-container">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          Loading donors…
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── FOOTER ───────────────────────────────────── -->
+  <footer>
+    <div class="footer-logo">Blood<span>Link</span></div>
+    <p>Connecting donors with patients, one drop at a time.</p>
+    <ul class="footer-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="search.html">Search Donors</a></li>
+      <li><a href="auth.html">Register</a></li>
+    </ul>
+    <div class="footer-copy">© 2025 BloodLink. Built to save lives.</div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ─── SEED DATA (Donors Table) ────────────────────
+    const SEED_DONORS = [
+      { donor_id: 1, user_id: 101, name: 'Arjun Sharma',    blood_group: 'O+',  city: 'Bhubaneswar', contact: '+91 98765 43210' },
+      { donor_id: 2, user_id: 102, name: 'Priya Patel',     blood_group: 'A+',  city: 'Cuttack',     contact: '+91 91234 56789' },
+      { donor_id: 3, user_id: 103, name: 'Rahul Mohanty',   blood_group: 'B+',  city: 'Bhubaneswar', contact: '+91 87654 32109' },
+      { donor_id: 4, user_id: 104, name: 'Sneha Das',       blood_group: 'AB+', city: 'Puri',        contact: '+91 76543 21098' },
+      { donor_id: 5, user_id: 105, name: 'Vikram Nair',     blood_group: 'O-',  city: 'Bhubaneswar', contact: '+91 65432 10987' },
+      { donor_id: 6, user_id: 106, name: 'Ananya Singh',    blood_group: 'A-',  city: 'Sambalpur',   contact: '+91 54321 09876' },
+      { donor_id: 7, user_id: 107, name: 'Ravi Kumar',      blood_group: 'B-',  city: 'Cuttack',     contact: '+91 43210 98765' },
+      { donor_id: 8, user_id: 108, name: 'Kavya Reddy',     blood_group: 'AB-', city: 'Rourkela',    contact: '+91 32109 87654' },
+      { donor_id: 9, user_id: 109, name: 'Amit Behera',     blood_group: 'O+',  city: 'Puri',        contact: '+91 98111 22333' },
+      { donor_id:10, user_id: 110, name: 'Lila Mishra',     blood_group: 'A+',  city: 'Bhubaneswar', contact: '+91 97222 33444' },
+      { donor_id:11, user_id: 111, name: 'Deepak Rath',     blood_group: 'B+',  city: 'Sambalpur',   contact: '+91 96333 44555' },
+      { donor_id:12, user_id: 112, name: 'Tanya Sahu',      blood_group: 'O-',  city: 'Rourkela',    contact: '+91 95444 55666' },
+    ];
+
+    // ─── STATE ───────────────────────────────────────
+    let allDonors  = [];
+    let displayed  = [];
+    let activeBlood = '';
+    let activeCity  = '';
+
+    // ─── INIT ────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+      // Navbar scroll
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', scrollY > 50));
+
+      // Merge seed + registered donors
+      const registered = JSON.parse(localStorage.getItem('bl_donors') || '[]');
+      allDonors = [...SEED_DONORS, ...registered];
+
+      // Read URL params
+      const params = new URLSearchParams(location.search);
+      const bloodParam = params.get('blood') || '';
+      const cityParam  = params.get('city')  || '';
+
+      if (bloodParam) {
+        document.getElementById('filter-blood').value = bloodParam;
+        activeBlood = bloodParam;
+      }
+      if (cityParam) {
+        document.getElementById('filter-city').value = cityParam;
+        activeCity = cityParam;
+      }
+
+      runSearch();
+    });
+
+    // Enter key search
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') runSearch();
+    });
+
+    // ─── SEARCH ──────────────────────────────────────
+    function runSearch() {
+      activeBlood = document.getElementById('filter-blood').value;
+      activeCity  = document.getElementById('filter-city').value.trim().toLowerCase();
+
+      // Update URL silently
+      const params = new URLSearchParams();
+      if (activeBlood) params.set('blood', activeBlood);
+      if (activeCity)  params.set('city', activeCity);
+      history.replaceState(null, '', `search.html${params.toString() ? '?' + params : ''}`);
+
+      displayed = allDonors.filter(d => {
+        const matchBlood = !activeBlood || d.blood_group === activeBlood;
+        const matchCity  = !activeCity  || d.city.toLowerCase().includes(activeCity);
+        return matchBlood && matchCity;
+      });
+
+      renderFilterTags();
+      sortAndRender();
+    }
+
+    // ─── SORT ─────────────────────────────────────────
+    function sortAndRender() {
+      const key = document.getElementById('sort-select').value;
+      displayed.sort((a, b) => {
+        if (key === 'blood') return a.blood_group.localeCompare(b.blood_group);
+        if (key === 'city')  return a.city.localeCompare(b.city);
+        return a.name.localeCompare(b.name);
+      });
+      renderResults();
+    }
+
+    // ─── RENDER RESULTS ───────────────────────────────
+    function renderResults() {
+      const container = document.getElementById('results-container');
+      document.getElementById('count-num').textContent = displayed.length;
+
+      if (displayed.length === 0) {
+        container.innerHTML = `
+          <div class="no-results">
+            <div class="nr-icon">🩸</div>
+            <h3>No Donors Found</h3>
+            <p>Try adjusting your filters. More donors join every day!</p>
+            <a href="auth.html?tab=register" class="btn btn-primary" style="text-decoration:none; display:inline-flex;">
+              Register as Donor
+            </a>
+          </div>`;
+        return;
+      }
+
+      const html = displayed.map((d, i) => {
+        const initials = d.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+        const delay = Math.min(i, 5);
+        return `
+          <div class="donor-card donor-card-delay-${delay}">
+            <div class="donor-avatar">${initials}</div>
+            <div class="donor-info">
+              <div class="donor-name">${escHtml(d.name)}</div>
+              <div class="donor-meta">
+                <span>📍 ${escHtml(d.city)}</span>
+                <span>📞 ${escHtml(d.contact)}</span>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.8rem; flex-shrink:0; flex-wrap:wrap;">
+              <div class="donor-blood-badge">${escHtml(d.blood_group)}</div>
+              <a href="tel:${escHtml(d.contact)}" class="contact-btn">📞 Call</a>
+            </div>
+          </div>`;
+      }).join('');
+
+      container.innerHTML = `<div class="donors-grid">${html}</div>`;
+    }
+
+    // ─── FILTER TAGS ──────────────────────────────────
+    function renderFilterTags() {
+      const wrap = document.getElementById('filter-tags');
+      let tags = '';
+      if (activeBlood) tags += `<div class="filter-tag">🩸 ${escHtml(activeBlood)} <button onclick="clearFilter('blood')">✕</button></div>`;
+      if (activeCity)  tags += `<div class="filter-tag">📍 ${escHtml(activeCity)} <button onclick="clearFilter('city')">✕</button></div>`;
+      wrap.innerHTML = tags;
+    }
+
+    function clearFilter(type) {
+      if (type === 'blood') {
+        document.getElementById('filter-blood').value = '';
+        activeBlood = '';
+      } else {
+        document.getElementById('filter-city').value = '';
+        activeCity = '';
+      }
+      runSearch();
+    }
+
+    // ─── UTILITY ──────────────────────────────────────
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type} show`;
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+  </script>
+
+</body>
+</html>

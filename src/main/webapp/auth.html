@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloodLink — Sign In / Register</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="form.css">
+</head>
+<body>
+
+  <div class="auth-page">
+
+    <!-- ─── LEFT PANEL ─────────────────────────────── -->
+    <div class="auth-panel">
+      <div class="auth-panel-grid"></div>
+      <div class="auth-panel-content">
+        <svg class="auth-drop" viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="panelDropGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#E8293E"/>
+              <stop offset="100%" style="stop-color:#8B0D1C"/>
+            </linearGradient>
+          </defs>
+          <path d="M60 5 C60 5, 10 60, 10 95 C10 125, 33 148, 60 148 C87 148, 110 125, 110 95 C110 60, 60 5, 60 5Z"
+            fill="url(#panelDropGrad)"/>
+          <text x="60" y="105" text-anchor="middle"
+            font-family="'Playfair Display', serif" font-size="28" font-weight="700"
+            fill="white">♥</text>
+        </svg>
+
+        <h2>Saving Lives,<br>One Match at a Time</h2>
+        <p>
+          Join the BloodLink network. Register as a donor, or find the blood type
+          you need — right in your city.
+        </p>
+
+        <div class="auth-facts">
+          <div class="auth-fact">
+            <span class="auth-fact-icon">🩸</span>
+            One donation can save up to 3 lives
+          </div>
+          <div class="auth-fact">
+            <span class="auth-fact-icon">📍</span>
+            Donors searchable by blood type & city
+          </div>
+          <div class="auth-fact">
+            <span class="auth-fact-icon">⚡</span>
+            Instant access during emergencies
+          </div>
+          <div class="auth-fact">
+            <span class="auth-fact-icon">🔒</span>
+            Your data is private and secure
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RIGHT FORM SIDE ────────────────────────── -->
+    <div class="auth-form-side">
+      <div class="auth-form-container">
+
+        <a href="index.html" class="auth-logo">
+          <div class="auth-logo-icon">♥</div>
+          <span class="auth-logo-text">Blood<span>Link</span></span>
+        </a>
+
+        <!-- Tab Toggle -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Login</button>
+          <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <!-- ── LOGIN FORM ──────────────────────────── -->
+        <form class="auth-form active" id="form-login" onsubmit="handleLogin(event)">
+          <h3>Welcome back</h3>
+          <p class="sub">Sign in to your BloodLink account</p>
+
+          <div class="form-field">
+            <label>Email Address</label>
+            <div class="input-wrap">
+              <span class="input-icon">✉</span>
+              <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+            </div>
+            <span class="field-error" id="login-email-err">Please enter a valid email.</span>
+          </div>
+
+          <div class="form-field">
+            <label>Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="login-pass" placeholder="Enter your password" autocomplete="current-password">
+            </div>
+            <span class="field-error" id="login-pass-err">Password must be at least 6 characters.</span>
+          </div>
+
+          <button type="submit" class="btn-auth" id="login-btn">Sign In</button>
+
+          <div class="form-divider">or</div>
+
+          <p style="text-align:center; font-size:0.88rem; color:var(--text-muted);">
+            Don't have an account?
+            <a href="#" onclick="switchTab('register')" style="color:var(--red); font-weight:600; text-decoration:none;">Register here →</a>
+          </p>
+        </form>
+
+        <!-- ── REGISTER FORM ───────────────────────── -->
+        <form class="auth-form" id="form-register" onsubmit="handleRegister(event)">
+          <h3>Create Account</h3>
+          <p class="sub">Join BloodLink as a donor or user</p>
+
+          <!-- Users Table: name, email, password -->
+          <div class="form-field">
+            <label>Full Name</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="reg-name" placeholder="Your full name" autocomplete="name">
+            </div>
+            <span class="field-error" id="reg-name-err">Name is required.</span>
+          </div>
+
+          <div class="form-field">
+            <label>Email Address</label>
+            <div class="input-wrap">
+              <span class="input-icon">✉</span>
+              <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
+            </div>
+            <span class="field-error" id="reg-email-err">Please enter a valid email.</span>
+          </div>
+
+          <div class="form-field">
+            <label>Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="reg-pass" placeholder="Min. 6 characters" autocomplete="new-password">
+            </div>
+            <span class="field-error" id="reg-pass-err">Password must be at least 6 characters.</span>
+          </div>
+
+          <div class="form-field">
+            <label>Confirm Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="reg-pass2" placeholder="Repeat password" autocomplete="new-password">
+            </div>
+            <span class="field-error" id="reg-pass2-err">Passwords do not match.</span>
+          </div>
+
+          <!-- Donor Table: blood_group, city, contact (optional toggle) -->
+          <div class="donor-toggle-wrap">
+            <input type="checkbox" class="toggle-input" id="donor-check">
+            <label for="donor-check" class="donor-toggle">
+              <div class="toggle-switch"></div>
+              <div>
+                <div class="toggle-label">🩸 Register as Blood Donor</div>
+                <div class="toggle-desc">Add your blood type & location to help others find you</div>
+              </div>
+            </label>
+
+            <!-- Donor extra fields (blood_group, city, contact) -->
+            <div class="donor-extra-fields" id="donor-fields">
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Blood Group</label>
+                  <div class="input-wrap">
+                    <span class="input-icon">🩸</span>
+                    <select id="donor-blood" style="padding-left:2.8rem;">
+                      <option value="">Select type</option>
+                      <option>A+</option>
+                      <option>A-</option>
+                      <option>B+</option>
+                      <option>B-</option>
+                      <option>AB+</option>
+                      <option>AB-</option>
+                      <option>O+</option>
+                      <option>O-</option>
+                    </select>
+                  </div>
+                  <span class="field-error" id="donor-blood-err">Please select blood group.</span>
+                </div>
+
+                <div class="form-field">
+                  <label>City</label>
+                  <div class="input-wrap">
+                    <span class="input-icon">📍</span>
+                    <input type="text" id="donor-city" placeholder="Your city">
+                  </div>
+                  <span class="field-error" id="donor-city-err">City is required.</span>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>Contact Number</label>
+                <div class="input-wrap">
+                  <span class="input-icon">📞</span>
+                  <input type="tel" id="donor-contact" placeholder="+91 00000 00000">
+                </div>
+                <span class="field-error" id="donor-contact-err">Please enter a contact number.</span>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-auth" id="reg-btn">Create Account</button>
+
+          <p style="text-align:center; font-size:0.88rem; color:var(--text-muted);">
+            Already registered?
+            <a href="#" onclick="switchTab('login')" style="color:var(--red); font-weight:600; text-decoration:none;">Sign in →</a>
+          </p>
+        </form>
+
+        <!-- ── SUCCESS STATE ───────────────────────── -->
+        <div class="auth-success" id="auth-success">
+          <div class="success-icon">✅</div>
+          <h3 id="success-title">You're in!</h3>
+          <p id="success-msg">Welcome to BloodLink. You can now find or connect with blood donors.</p>
+          <a href="search.html" class="btn-auth" style="display:inline-block; text-align:center; text-decoration:none; margin-top:0.5rem;">
+            Search Donors →
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ─── TAB SWITCH ─────────────────────────────────
+    function switchTab(tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('tab-login').classList.toggle('active', isLogin);
+      document.getElementById('tab-register').classList.toggle('active', !isLogin);
+      document.getElementById('form-login').classList.toggle('active', isLogin);
+      document.getElementById('form-register').classList.toggle('active', !isLogin);
+      document.getElementById('auth-success').classList.remove('show');
+    }
+
+    // ─── DONOR TOGGLE ───────────────────────────────
+    const donorCheck = document.getElementById('donor-check');
+    donorCheck.addEventListener('change', () => {
+      document.getElementById('donor-fields').classList.toggle('show', donorCheck.checked);
+    });
+
+    // ─── VALIDATION HELPERS ──────────────────────────
+    function showErr(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.classList.add('show');
+      el.previousElementSibling?.querySelector('input, select')?.classList.add('error');
+    }
+
+    function clearErr(id) {
+      const el = document.getElementById(id);
+      el.classList.remove('show');
+    }
+
+    function val(id) { return document.getElementById(id).value.trim(); }
+
+    // ─── LOGIN ──────────────────────────────────────
+    function handleLogin(e) {
+      e.preventDefault();
+      let valid = true;
+
+      clearErr('login-email-err'); clearErr('login-pass-err');
+
+      const email = val('login-email');
+      const pass  = val('login-pass');
+
+      if (!email || !email.includes('@')) { showErr('login-email-err', 'Enter a valid email.'); valid = false; }
+      if (pass.length < 6)                { showErr('login-pass-err', 'Password must be ≥ 6 chars.'); valid = false; }
+
+      if (!valid) return;
+
+      // Simulate login (frontend demo — no backend)
+      const users = JSON.parse(localStorage.getItem('bl_users') || '[]');
+      const found = users.find(u => u.email === email && u.password === pass);
+
+      if (!found) {
+        showToast('Invalid email or password.', 'error');
+        return;
+      }
+
+      localStorage.setItem('bl_current_user', JSON.stringify(found));
+      showSuccess(`Welcome back, ${found.name}!`, 'You are now signed in to BloodLink.');
+    }
+
+    // ─── REGISTER ───────────────────────────────────
+    function handleRegister(e) {
+      e.preventDefault();
+      let valid = true;
+
+      ['reg-name-err','reg-email-err','reg-pass-err','reg-pass2-err',
+       'donor-blood-err','donor-city-err','donor-contact-err'].forEach(clearErr);
+
+      const name  = val('reg-name');
+      const email = val('reg-email');
+      const pass  = val('reg-pass');
+      const pass2 = val('reg-pass2');
+      const isDonor = donorCheck.checked;
+
+      if (!name)                       { showErr('reg-name-err', 'Name is required.');              valid = false; }
+      if (!email || !email.includes('@')){ showErr('reg-email-err', 'Enter a valid email.');         valid = false; }
+      if (pass.length < 6)             { showErr('reg-pass-err', 'Password must be ≥ 6 chars.');    valid = false; }
+      if (pass !== pass2)              { showErr('reg-pass2-err', 'Passwords do not match.');        valid = false; }
+
+      let bloodGroup = '', city = '', contact = '';
+      if (isDonor) {
+        bloodGroup = val('donor-blood');
+        city       = val('donor-city');
+        contact    = val('donor-contact');
+        if (!bloodGroup) { showErr('donor-blood-err', 'Select a blood group.'); valid = false; }
+        if (!city)       { showErr('donor-city-err', 'City is required.');      valid = false; }
+        if (!contact)    { showErr('donor-contact-err', 'Contact is required.');valid = false; }
+      }
+
+      if (!valid) return;
+
+      // Persist to localStorage (simulates Users + Donors tables)
+      const users  = JSON.parse(localStorage.getItem('bl_users')  || '[]');
+      const donors = JSON.parse(localStorage.getItem('bl_donors') || '[]');
+
+      if (users.find(u => u.email === email)) {
+        showErr('reg-email-err', 'Email already registered.');
+        return;
+      }
+
+      const userId = Date.now();
+      const newUser = { user_id: userId, name, email, password: pass };
+      users.push(newUser);
+      localStorage.setItem('bl_users', JSON.stringify(users));
+
+      if (isDonor) {
+        const donorId = userId + 1;
+        donors.push({ donor_id: donorId, user_id: userId, blood_group: bloodGroup, city, contact, name });
+        localStorage.setItem('bl_donors', JSON.stringify(donors));
+      }
+
+      localStorage.setItem('bl_current_user', JSON.stringify(newUser));
+      showSuccess('Account Created!', isDonor
+        ? `You are now registered as a ${bloodGroup} donor in ${city}.`
+        : 'Welcome to BloodLink. You can now search for donors.');
+    }
+
+    // ─── SUCCESS STATE ──────────────────────────────
+    function showSuccess(title, msg) {
+      document.getElementById('form-login').classList.remove('active');
+      document.getElementById('form-register').classList.remove('active');
+      document.getElementById('success-title').textContent = title;
+      document.getElementById('success-msg').textContent = msg;
+      document.getElementById('auth-success').classList.add('show');
+    }
+
+    // ─── TOAST ──────────────────────────────────────
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type} show`;
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    // ─── URL PARAM: open register tab ───────────────
+    if (new URLSearchParams(location.search).get('tab') === 'register') {
+      switchTab('register');
+    }
+  </script>
+</body>
+</html>

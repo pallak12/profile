@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloodLink — Find Donors. Save Lives.</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ─── NAV ─────────────────────────────────────── -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">♥</div>
+      <span class="nav-logo-text">Blood<span>Link</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="search.html">Find Donor</a></li>
+      <li><a href="auth.html">Register</a></li>
+      <li><a href="auth.html" class="nav-cta">Login</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── HERO ──────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-bg-dots"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="hero-pulse"></span>
+        Emergency Blood Network
+      </div>
+
+      <h1>Every Drop<br>of Blood is a<br><em>Gift of Life</em></h1>
+
+      <p class="hero-desc">
+        BloodLink connects patients in urgent need with voluntary donors nearby.
+        Fast, free, and reliable — because every second counts.
+      </p>
+
+      <div class="hero-actions">
+        <a href="search.html" class="btn btn-primary">
+          🔍 Find a Donor
+        </a>
+        <a href="auth.html" class="btn btn-outline">
+          Become a Donor
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <strong>1,200+</strong>
+          <span>Registered Donors</span>
+        </div>
+        <div class="stat-item">
+          <strong>8</strong>
+          <span>Blood Types Covered</span>
+        </div>
+        <div class="stat-item">
+          <strong>24/7</strong>
+          <span>Available Access</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="blood-drop-container">
+        <div class="blood-drop-bg"></div>
+        <svg class="blood-drop-svg" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="dropGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#E8293E"/>
+              <stop offset="100%" style="stop-color:#8B0D1C"/>
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <path d="M100 10 C100 10, 20 100, 20 160 C20 207, 56 240, 100 240 C144 240, 180 207, 180 160 C180 100, 100 10, 100 10 Z"
+            fill="url(#dropGrad)" filter="url(#glow)"/>
+          <path d="M100 30 C100 30, 40 108, 40 160 C40 196, 66 224, 100 224"
+            fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2.5" stroke-linecap="round"/>
+          <text x="100" y="170" text-anchor="middle"
+            font-family="'Playfair Display', serif" font-size="36" font-weight="700"
+            fill="white" opacity="0.9">B+</text>
+          <text x="100" y="195" text-anchor="middle"
+            font-family="'DM Sans', sans-serif" font-size="11"
+            fill="rgba(255,255,255,0.7)" letter-spacing="2">BLOOD</text>
+        </svg>
+        <div class="blood-group-badges">
+          <div class="badge">A+</div>
+          <div class="badge">O−</div>
+          <div class="badge">AB+</div>
+          <div class="badge">B−</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── HOW IT WORKS ────────────────────────────── -->
+  <section class="how-it-works">
+    <div class="section-label">Simple Process</div>
+    <h2>How BloodLink Works</h2>
+    <p class="how-subtitle">Three steps to connect donors with those in need</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Create Account</h3>
+        <p>Register in seconds. Donors can add their blood type, city, and contact details to our database.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Search by Need</h3>
+        <p>Patients or hospitals search donors by blood group and location — results appear instantly.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Connect & Donate</h3>
+        <p>Contact the donor directly. Every match could be a life saved. No middleman, no delay.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── BLOOD GROUPS ─────────────────────────────── -->
+  <section class="blood-groups">
+    <div class="section-label">Database Coverage</div>
+    <h2>All Blood Types Covered</h2>
+    <p>Our donor network spans all eight major blood groups</p>
+
+    <div class="bg-grid">
+      <div class="bg-card" onclick="goSearch('A+')">
+        <span class="bg-type">A+</span>
+        <span class="bg-label">Find Donor</span>
+      </div>
+      <div class="bg-card" onclick="goSearch('A-')">
+        <span class="bg-type">A−</span>
+        <span class="bg-label">Find Donor</span>
+      </div>
+      <div class="bg-card" onclick="goSearch('B+')">
+        <span class="bg-type">B+</span>
+        <span class="bg-label">Find Donor</span>
+      </div>
+      <div class="bg-card" onclick="goSearch('B-')">
+        <span class="bg-type">B−</span>
+        <span class="bg-label">Find Donor</span>
+      </div>
+      <div class="bg-card" onclick="goSearch('AB+')">
+        <span class="bg-type">AB+</span>
+        <span class="bg-label">Find Donor</span>
+      </div>
+      <div class="bg-card" onclick="goSearch('AB-')">
+        <span class="bg-type">AB−</span>
+        <span class="bg-label">Find Donor</span>
+      </div>
+      <div class="bg-card" onclick="goSearch('O+')">
+        <span class="bg-type">O+</span>
+        <span class="bg-label">Find Donor</span>
+      </div>
+      <div class="bg-card" onclick="goSearch('O-')">
+        <span class="bg-type">O−</span>
+        <span class="bg-label">Find Donor</span>
+      </div>
+    </div>
+
+    <a href="search.html" class="btn btn-white">Browse All Donors →</a>
+  </section>
+
+  <!-- ─── CTA ──────────────────────────────────────── -->
+  <section class="cta-banner">
+    <h2>Ready to Save a Life?</h2>
+    <p>Register as a donor today. Your one decision can give someone another chance.</p>
+    <a href="auth.html" class="btn btn-white">Register as Donor</a>
+  </section>
+
+  <!-- ─── FOOTER ───────────────────────────────────── -->
+  <footer>
+    <div class="footer-logo">Blood<span>Link</span></div>
+    <p>Connecting donors with patients, one drop at a time.</p>
+    <ul class="footer-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="search.html">Search Donors</a></li>
+      <li><a href="auth.html">Register</a></li>
+      <li><a href="auth.html">Login</a></li>
+    </ul>
+    <div class="footer-copy">
+      © 2025 BloodLink. Built to save lives.
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Blood group quick search
+    function goSearch(group) {
+      window.location.href = `search.html?blood=${encodeURIComponent(group)}`;
+    }
+  </script>
+</body>
+</html>
